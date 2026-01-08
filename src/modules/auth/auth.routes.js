@@ -12,16 +12,48 @@ router.post("/register", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password)
-      return res.status(400).json({ message: "Invalid input" });
+    //  Required fields check
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
 
+    //  Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Please provide a valid email address",
+      });
+    }
+
+    //  Password validation (min 6 chars)
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    //  Check if user already exists
     const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ message: "User already exists" });
+    if (exists) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
 
+    //  Hash password
     const hash = await bcrypt.hash(password, 10);
-    await User.create({ email, password: hash });
 
-    res.json({ message: "Registered successfully" });
+    //  Create user
+    await User.create({
+      email: email.toLowerCase(),
+      password: hash,
+    });
+
+    res.status(201).json({
+      message: "Registered successfully",
+    });
   } catch (err) {
     next(err);
   }
