@@ -1,16 +1,13 @@
 # URL Shortener Service
 
-This repository contains a **URL Shortener Service** built as part of the **Full-Stack Developer Assignment**.  
-The application allows authenticated users to create short URLs, track total visits, and manage their links via a dashboard.
-
-> Note: This repository currently includes the **backend** implementation. The frontend can be connected following the API documentation below.
+A backend-powered URL Shortener Service built as part of the **Full-Stack Developer Assignment**.  
+The application allows authenticated users to generate short URLs, track visit counts, and manage their links securely.
 
 ---
 
-## 1. Setup Instructions
+## 1️⃣ Setup Instructions
 
 ### Prerequisites
-
 - Node.js (v18+ recommended)
 - npm
 - MongoDB (local or cloud)
@@ -33,42 +30,41 @@ JWT_SECRET=your_jwt_secret
 BASE_URL=http://localhost:5000
 ```
 
-Run the server:
+Run the backend server:
 
 ```bash
 npm run dev
 ```
 
-The backend will start on:
-
+Server will start at:
 ```
 http://localhost:5000
 ```
 
 ---
 
-## 2. Project Structure
+## 2️⃣ Project Structure
 
 ```
 backend/
 ├── src/
-│   ├── app.js                # Express app configuration
-│   ├── server.js             # Server entry point
+│   ├── app.js                 # Express app configuration
+│   ├── server.js              # Server entry point
 │   ├── config/
-│   │   └── db.js             # Database connection
+│   │   └── db.js              # MongoDB connection
 │   ├── middlewares/
-│   │   ├── auth.middleware.js
+│   │   ├── auth.middleware.js # JWT authentication
 │   │   └── error.middleware.js
 │   ├── models/
-│   │   ├── User.js           # User schema
-│   │   └── Url.js            # URL schema
+│   │   ├── User.js            # User model
+│   │   └── Url.js             # URL model
 │   ├── modules/
 │   │   ├── auth/
 │   │   │   └── auth.routes.js
 │   │   └── url/
 │   │       └── url.routes.js
 │   └── utils/
-│       └── generateCode.js   # Short code generator
+│       └── generateCode.js    # Short code generator
 │
 ├── package.json
 ├── .env.example
@@ -77,18 +73,16 @@ backend/
 
 ---
 
-## 3. API Documentation
+## 3️⃣ API Documentation
 
-### Authentication
+### 🔐 Authentication
 
 #### Register User
-
 ```
 POST /api/auth/register
 ```
 
 Request Body:
-
 ```json
 {
   "email": "user@example.com",
@@ -96,106 +90,166 @@ Request Body:
 }
 ```
 
+Success Response:
+```json
+{
+  "success": true,
+  "message": "User registered successfully"
+}
+```
+
 ---
 
 #### Login User
-
 ```
 POST /api/auth/login
 ```
 
-Response:
-
+Request Body:
 ```json
 {
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+Success Response:
+```json
+{
+  "success": true,
   "token": "jwt_token_here"
 }
 ```
 
 ---
 
-### URL Shortener
+### 🔗 URL Management  
+**All endpoints below require authentication**
+
+Header:
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
 
 #### Create Short URL
-
 ```
 POST /api/urls
-Authorization: Bearer <token>
 ```
 
 Request Body:
-
 ```json
 {
   "originalUrl": "https://example.com/very/long/url"
 }
 ```
 
-Response:
-
+Success Response:
 ```json
 {
-  "shortCode": "aB3x9P",
-  "shortUrl": "http://localhost:5000/aB3x9P"
+  "success": true,
+  "data": {
+    "_id": "65a1b2c3d4e5",
+    "originalUrl": "https://example.com/very/long/url",
+    "shortCode": "x7K9mP",
+    "shortUrl": "http://localhost:5000/x7K9mP",
+    "clicks": 0,
+    "createdAt": "2026-01-08T10:30:00.000Z"
+  }
+}
+```
+
+Limit Reached Response:
+```json
+{
+  "success": false,
+  "message": "Free tier limit reached (100 URLs)"
 }
 ```
 
 ---
 
-#### Get User URLs
-
+#### Get All User URLs
 ```
 GET /api/urls
-Authorization: Bearer <token>
+```
+
+Request Body:
+```
+No request body
+```
+
+Success Response:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "65a1b2c3d4e5",
+      "originalUrl": "https://example.com/page-one",
+      "shortCode": "aB3x9P",
+      "shortUrl": "http://localhost:5000/aB3x9P",
+      "clicks": 12,
+      "createdAt": "2026-01-07T09:15:00.000Z"
+    }
+  ]
+}
 ```
 
 ---
 
 #### Delete URL
-
 ```
 DELETE /api/urls/:id
-Authorization: Bearer <token>
+```
+
+Success Response:
+```json
+{
+  "success": true,
+  "message": "URL deleted successfully"
+}
 ```
 
 ---
 
-### URL Redirection
+### 🔁 URL Redirection (Public)
 
 ```
 GET /:shortCode
 ```
 
 - Redirects to the original URL
-- Increments visit count
+- Increments click count automatically
 
 ---
 
-## 4. Design Decisions
+## 4️⃣ Design Decisions
 
-- **JWT Authentication** for secure, stateless authentication
-- **MongoDB + Mongoose** for flexible schema design
-- **Short code length (6–8 characters)** to balance uniqueness and usability
-- **Modular route structure** for scalability and maintainability
-- **Middleware-based auth & error handling** for clean separation of concerns
-
----
-
-## 5. Known Limitations
-
-- No pagination for URL list
-- No advanced analytics (charts/graphs)
-- No paid upgrade system (limit alert only)
-- No frontend included in this repository
+- JWT-based authentication for secure, stateless sessions
+- MongoDB with Mongoose for flexible schema management
+- Short codes of 6–8 characters for balance between uniqueness and readability
+- Modular architecture for scalability
+- Middleware-based error and auth handling
 
 ---
 
-## 6. Notes
+## 5️⃣ Known Limitations
 
-- Codebase follows a clean and organized structure
-- Meaningful variable and function names are used
-- No sensitive credentials are committed
-- Application runs correctly on a fresh clone using the steps above
+- No pagination in URL listing
+- No analytics graphs
+- No paid upgrade system (alert only)
+- Frontend not included in this repository
+
+---
+
+## 6️⃣ Notes
+
+- Clean and readable codebase
+- Meaningful variable and function names
+- No sensitive credentials committed
+- Application runs correctly on a fresh clone
 
 ---
 
