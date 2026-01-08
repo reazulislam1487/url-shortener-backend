@@ -14,14 +14,10 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/urls", urlRoutes);
 
-/**
- * Redirect + click tracking
- */
-
-// test api
 app.get("/", (req, res) => {
   res.json({ message: "API is working" });
 });
+
 app.get("/:shortCode", async (req, res, next) => {
   try {
     const url = await Url.findOne({ shortCode: req.params.shortCode });
