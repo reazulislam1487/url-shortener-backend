@@ -1,11 +1,19 @@
 import mongoose from "mongoose";
 
+let isConnected = false;
+
 export const connectDB = async () => {
+  if (isConnected) return;
+
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: "url-shortener",
+    });
+
+    isConnected = true;
     console.log("✅ MongoDB connected");
-  } catch (error) {
-    console.error("❌ MongoDB connection failed");
-    process.exit(1);
+  } catch (err) {
+    console.error("❌ MongoDB connection failed", err);
+    throw err;
   }
 };

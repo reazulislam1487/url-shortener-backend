@@ -4,6 +4,6 @@ dotenv.config();
 import app from "../src/app.js";
 import { connectDB } from "../src/config/db.js";
 
-connectDB();
+await connectDB(); // 🔥 THIS IS THE KEY
 
 export default app;
