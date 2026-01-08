@@ -19,7 +19,7 @@ app.use("/urls", urlRoutes);
  */
 
 // test api
-app.get("/api/test", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ message: "API is working" });
 });
 app.get("/:shortCode", async (req, res, next) => {
