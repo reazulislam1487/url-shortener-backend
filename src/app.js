@@ -17,6 +17,11 @@ app.use("/urls", urlRoutes);
 /**
  * Redirect + click tracking
  */
+
+// test api
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working" });
+});
 app.get("/:shortCode", async (req, res, next) => {
   try {
     const url = await Url.findOne({ shortCode: req.params.shortCode });
