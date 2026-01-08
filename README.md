@@ -8,6 +8,7 @@ The application allows authenticated users to generate short URLs, track visit c
 ## 1️⃣ Setup Instructions
 
 ### Prerequisites
+
 - Node.js (v18+ recommended)
 - npm
 - MongoDB (local or cloud)
@@ -26,7 +27,9 @@ Create a `.env` file based on `.env.example`:
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=super_secret_jwt_key_here
+JWT_EXPIRES_IN=7d
+BCRYPT_SALT_ROUNDS=10
 BASE_URL=http://localhost:5000
 ```
 
@@ -37,6 +40,7 @@ npm run dev
 ```
 
 Server will start at:
+
 ```
 http://localhost:5000
 ```
@@ -78,11 +82,13 @@ backend/
 ### 🔐 Authentication
 
 #### Register User
+
 ```
 POST /api/auth/register
 ```
 
 Request Body:
+
 ```json
 {
   "email": "user@example.com",
@@ -91,6 +97,7 @@ Request Body:
 ```
 
 Success Response:
+
 ```json
 {
   "success": true,
@@ -101,11 +108,13 @@ Success Response:
 ---
 
 #### Login User
+
 ```
 POST /api/auth/login
 ```
 
 Request Body:
+
 ```json
 {
   "email": "user@example.com",
@@ -114,6 +123,7 @@ Request Body:
 ```
 
 Success Response:
+
 ```json
 {
   "success": true,
@@ -123,10 +133,12 @@ Success Response:
 
 ---
 
-### 🔗 URL Management  
+### 🔗 URL Management
+
 **All endpoints below require authentication**
 
 Header:
+
 ```
 Authorization: Bearer <JWT_TOKEN>
 ```
@@ -134,11 +146,13 @@ Authorization: Bearer <JWT_TOKEN>
 ---
 
 #### Create Short URL
+
 ```
 POST /api/urls
 ```
 
 Request Body:
+
 ```json
 {
   "originalUrl": "https://example.com/very/long/url"
@@ -146,6 +160,7 @@ Request Body:
 ```
 
 Success Response:
+
 ```json
 {
   "success": true,
@@ -161,6 +176,7 @@ Success Response:
 ```
 
 Limit Reached Response:
+
 ```json
 {
   "success": false,
@@ -171,16 +187,19 @@ Limit Reached Response:
 ---
 
 #### Get All User URLs
+
 ```
 GET /api/urls
 ```
 
 Request Body:
+
 ```
 No request body
 ```
 
 Success Response:
+
 ```json
 {
   "success": true,
@@ -200,11 +219,13 @@ Success Response:
 ---
 
 #### Delete URL
+
 ```
 DELETE /api/urls/:id
 ```
 
 Success Response:
+
 ```json
 {
   "success": true,
